@@ -1,5 +1,6 @@
 package com.minhductran.tutorial.minhductran.controller;
 
+import com.minhductran.tutorial.minhductran.dto.request.APIRespone;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
 import com.minhductran.tutorial.minhductran.entity.User;
@@ -20,8 +21,11 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody @Valid UserCreationRequest request) {
-        return userService.createUser(request);
+    APIRespone<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+        APIRespone<User> apiRespone = new APIRespone<>();
+        apiRespone.setResult(userService.createUser(request));
+
+        return apiRespone;
     }
 
     @GetMapping
