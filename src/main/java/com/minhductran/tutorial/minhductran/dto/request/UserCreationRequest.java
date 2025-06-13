@@ -1,19 +1,11 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
 public class UserCreationRequest {
-    private int id;
     private String username;
     private String password;
     private String firstName;
     private String lastName;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;
