@@ -4,6 +4,7 @@ import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
 import com.minhductran.tutorial.minhductran.entity.User;
 import com.minhductran.tutorial.minhductran.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest request) {
+    User createUser(@RequestBody @Valid UserCreationRequest request) {
         return userService.createUser(request);
     }
 
