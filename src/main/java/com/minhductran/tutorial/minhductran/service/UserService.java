@@ -3,8 +3,6 @@ package com.minhductran.tutorial.minhductran.service;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
 import com.minhductran.tutorial.minhductran.entity.User;
-import com.minhductran.tutorial.minhductran.exception.ApplicationExeption;
-import com.minhductran.tutorial.minhductran.exception.ErrorCode;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,7 @@ public class UserService {
         User user = new User();
 
         if(userRepository.existsByUsername(request.getUsername())) {
-            throw new ApplicationExeption(ErrorCode.USER_EXITED);
+            throw new RuntimeException("USERNAME ALREADY EXISTS");
         }
 
         user.setUsername(request.getUsername());

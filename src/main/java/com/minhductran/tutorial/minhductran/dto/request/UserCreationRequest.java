@@ -1,5 +1,6 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class UserCreationRequest {
@@ -9,7 +10,9 @@ public class UserCreationRequest {
 
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
 
 
