@@ -10,9 +10,9 @@ public class UserCreationRequest {
 
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
-    @NotBlank
+    @NotBlank(message = "First name cannot be blank")
     private String firstName;
-    @NotBlank
+    @NotBlank(message = "Last name cannot be blank")
     private String lastName;
 
 

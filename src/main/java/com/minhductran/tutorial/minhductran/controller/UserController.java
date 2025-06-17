@@ -1,6 +1,7 @@
 package com.minhductran.tutorial.minhductran.controller;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
+import com.minhductran.tutorial.minhductran.dto.response.ResponeError;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseSuccess;
 import com.minhductran.tutorial.minhductran.entity.User;
@@ -22,8 +23,14 @@ public class UserController {
 
     @PostMapping
     ResponseData<User> createUser(@RequestBody @Valid UserCreationRequest request) {
-        User user = userService.createUser(request);
-        return new ResponseData<User>(HttpStatus.CREATED.value(), "User created successfully", user);
+
+        try {
+            User user = userService.createUser(request);
+            return new ResponseData<User>(HttpStatus.CREATED.value(), "User created successfully", user);
+        } catch (Exception e) {
+            return new ResponeError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+
     }
 
     @GetMapping
