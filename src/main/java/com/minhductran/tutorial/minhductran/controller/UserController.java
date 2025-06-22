@@ -1,10 +1,9 @@
 package com.minhductran.tutorial.minhductran.controller;
-import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
-import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
-import com.minhductran.tutorial.minhductran.dto.response.ResponeError;
+import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.response.ResponeErrorDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
-import com.minhductran.tutorial.minhductran.dto.response.ResponseSuccess;
-import com.minhductran.tutorial.minhductran.entity.User;
+import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +21,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    ResponseData<User> createUser(@RequestBody @Valid UserCreationRequest request) {
+    ResponseData<User> createUser(@RequestBody @Valid UserCreationDTO request) {
 
         try {
             User user = userService.createUser(request);
             return new ResponseData<User>(HttpStatus.CREATED.value(), "User created successfully", user);
         } catch (Exception e) {
-            return new ResponeError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
-
     }
 
     @GetMapping
@@ -48,7 +46,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    ResponseData<User> updateUser(@PathVariable int userId, @RequestBody UserUpdateRequest request) {
+    ResponseData<User> updateUser(@PathVariable int userId, @RequestBody UserUpdateDTO request) {
         User user = userService.updateUser(userId, request);
         return new ResponseData<User>(HttpStatus.OK.value(), "User updated successfully", user);
     }

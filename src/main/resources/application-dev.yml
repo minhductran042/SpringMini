@@ -1,0 +1,23 @@
+server:
+  port: 8081
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test_db
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+openapi:
+  service:
+    api-docs: api-services
+    service: http://localhost:${server_port}
+    title: API Services
+    version: 1.0.0

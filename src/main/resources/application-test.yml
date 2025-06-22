@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  config:
+    activate:
+      on-profile: test
+openapi:
+  service:
+    api-docs: api-services
+    service: http://localhost:${server_port}
+    title: API Services
+    version: 1.0.0

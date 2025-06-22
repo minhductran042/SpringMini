@@ -1,14 +1,13 @@
 package com.minhductran.tutorial.minhductran.service.impl;
 
 
-import com.minhductran.tutorial.minhductran.dto.request.UserCreationRequest;
-import com.minhductran.tutorial.minhductran.dto.request.UserUpdateRequest;
-import com.minhductran.tutorial.minhductran.entity.User;
+import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
+import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,17 +20,18 @@ public class UserServiceImpl implements UserService {
 
     // Implement the methods from UserService interface here
     @Override
-    public User createUser(UserCreationRequest request) {
-        User user = new User();
+    public User createUser(UserCreationDTO request) {
 
         if(userRepository.existsByUsername(request.getUsername())) {
             throw new ResourceNotFoundException("USERNAME ALREADY EXISTS");
         }
-
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .phone(request.getPhone())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .build();
 
         return userRepository.save(user);
     }
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(int userId, UserUpdateRequest request) {
+    public User updateUser(int userId, UserUpdateDTO request) {
         if(!userRepository.findById(userId).isEmpty()){
             throw new ResourceNotFoundException("User not found");
         }

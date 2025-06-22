@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: SpringTutorial
+  profiles:
+    active: @spring.profiles.active@
+  logging:
+    file:
+      name: logs/application.log
+    level:
+      root: INFO
