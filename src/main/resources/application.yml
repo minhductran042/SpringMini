@@ -2,9 +2,9 @@ spring:
   application:
     name: SpringTutorial
   profiles:
-    active: @spring.profiles.active@
+    active: dev
   logging:
     file:
       name: logs/application.log
     level:
-      root: INFO
+      root: INFO #TRACE->DEBUG->INFO->WARN->ERROR

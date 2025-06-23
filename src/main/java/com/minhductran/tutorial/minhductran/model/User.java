@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,8 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "users")
-public class User extends AbstractEntity{
-
+public class User extends AbstractEntity {
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -25,7 +25,4 @@ public class User extends AbstractEntity{
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-
-
-
 }

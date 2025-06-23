@@ -13,7 +13,7 @@ import java.util.Date;
 @MappedSuperclass // Anntation nay cho phep lop nay duoc su dung nhu 1 lop co so cho entity khac
 public abstract class AbstractEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tu dong tang id khi tao moi entity
     @Column(name = "id")
     private int id;
 
