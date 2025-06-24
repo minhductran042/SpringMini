@@ -38,10 +38,12 @@ public class UserController {
 
     @GetMapping
     ResponseData<List<UserDetailRespone>> getAllUsers(@RequestParam(defaultValue = "0", required = false) int pageNo,
-                                                      @RequestParam (defaultValue = "20", required = false) int pageSize) {
-         List<UserDetailRespone> users = userService.getAllUsers(pageNo, pageSize);
+                                                      @RequestParam (defaultValue = "20", required = false) int pageSize,
+                                                      @RequestParam (defaultValue = "id", required = false) String sortBy,
+                                                      @RequestParam (defaultValue = "asc", required = false) String sortOrder) {
+         List<UserDetailRespone> users = userService.getAllUsers(pageNo, pageSize, sortBy, sortOrder);
          return new ResponseData<List<UserDetailRespone>>(HttpStatus.OK.value(),
-                "User created successfully", users);
+                "Get all users successfully", users);
     }
 
     @GetMapping("/{userId}")

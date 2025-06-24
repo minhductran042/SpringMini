@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
     public User createUser(UserCreationDTO request);
-    public List<UserDetailRespone> getAllUsers(int pageNo, int pageSize);
+    public List<UserDetailRespone> getAllUsers(int pageNo, int pageSize, String sortBy, String sortOrder);
     public UserDetailRespone getUser(int userId);
     public UserDetailRespone updateUser(int userId, UserUpdateDTO request);
     public void deleteUser(int userId);

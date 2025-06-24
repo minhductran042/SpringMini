@@ -25,6 +25,8 @@ public class User extends AbstractEntity {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Todo> todos;
+
 }
