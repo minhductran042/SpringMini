@@ -3,11 +3,14 @@ import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponeErrorDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
+import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +18,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
+@Validated
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -22,7 +27,7 @@ public class UserController {
 
     @PostMapping
     ResponseData<User> createUser(@RequestBody @Valid UserCreationDTO request) {
-
+        log.info("Request to create user, {} {}", request.getFirstName(), request.getLastName());
         try {
             User user = userService.createUser(request);
             return new ResponseData<User>(HttpStatus.CREATED.value(), "User created successfully", user);
@@ -32,23 +37,24 @@ public class UserController {
     }
 
     @GetMapping
-    ResponseData<List<User>> getUsers() {
-         List<User> users = userService.getUsers();
-         return new ResponseData<List<User>>(HttpStatus.OK.value(),
+    ResponseData<List<UserDetailRespone>> getAllUsers(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                      @RequestParam (defaultValue = "20", required = false) int pageSize) {
+         List<UserDetailRespone> users = userService.getAllUsers(pageNo, pageSize);
+         return new ResponseData<List<UserDetailRespone>>(HttpStatus.OK.value(),
                 "User created successfully", users);
     }
 
     @GetMapping("/{userId}")
-    ResponseData<User> getUser(@PathVariable int userId) {
-        User user = userService.getUser(userId);
-        return new ResponseData<User>(HttpStatus.OK.value(),
+    ResponseData<UserDetailRespone> getUser(@PathVariable int userId) {
+        UserDetailRespone user = userService.getUser(userId);
+        return new ResponseData<UserDetailRespone>(HttpStatus.OK.value(),
                 "Get user successfully", user);
     }
 
     @PutMapping("/{userId}")
-    ResponseData<User> updateUser(@PathVariable int userId, @RequestBody @Valid UserUpdateDTO request) {
-        User user = userService.updateUser(userId, request);
-        return new ResponseData<User>(HttpStatus.OK.value(), "User updated successfully", user);
+    ResponseData<UserDetailRespone> updateUser(@PathVariable int userId, @RequestBody @Valid UserUpdateDTO request) {
+        UserDetailRespone user = userService.updateUser(userId, request);
+        return new ResponseData<UserDetailRespone>(HttpStatus.OK.value(), "User updated successfully", user);
     }
 
     @DeleteMapping("/{userId}")

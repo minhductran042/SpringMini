@@ -3,16 +3,22 @@ package com.minhductran.tutorial.minhductran.service.impl;
 
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.mappers.UserMapper;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -37,37 +43,42 @@ public class UserServiceImpl implements UserService {
 //                .lastName(request.getLastName())
 //                .build();
         User user = userMapper.toEntity(request);
-
+        log.info("Creating user successfully");
         return userRepository.save(user);
     }
 
     @Override
-    public User getUser(int userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("USER NOT FOUND"));
+    public UserDetailRespone getUser(int userId) {
+        User user = getUserById(userId);
+        return userMapper.toUserDetailResponse(user);
     }
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserDetailRespone> getAllUsers(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<User> users = userRepository.findAll(pageable);
+        return users.stream().map(userMapper::toUserDetailResponse).toList();
     }
 
     @Override
-    public User updateUser(int userId, UserUpdateDTO request) {
-        if(userRepository.findById(userId).isEmpty()){
-            throw new ResourceNotFoundException("User not found");
-        }
-        User user = getUser(userId);
+    public UserDetailRespone updateUser(int userId, UserUpdateDTO request) {
+        User user = getUserById(userId);
         userMapper.updateEntity(user, request);
-        return userRepository.save(user);
+        log.info("Update user successfully");
+        userRepository.save(user);
+        return userMapper.toUserDetailResponse(user);
+
     }
 
     @Override
-    public void deleteUser(int id) {
-        if(userRepository.findById(id).isEmpty()){
-            throw new ResourceNotFoundException("User not found");
-        }
-        userRepository.deleteById(id);
+    public void deleteUser(int userId) {
+        getUserById(userId); // Check xem user co ton tai khong
+        userRepository.deleteById(userId);
+        log.info("Delete user successfully, userId={}", userId);
     }
 
+    private User getUserById(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
 }

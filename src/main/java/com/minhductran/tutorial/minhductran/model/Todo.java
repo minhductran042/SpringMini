@@ -1,9 +1,6 @@
 package com.minhductran.tutorial.minhductran.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -21,9 +18,9 @@ public class Todo extends AbstractEntity {
     @Column(name = "completed")
     private boolean completed;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id") // Khóa ngoại tham chiếu đến bảng users
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id") // Khóa ngoại tham chiếu đến bảng users
+    private User user;
 
     @Override
     public String toString() {
