@@ -10,6 +10,8 @@ import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.ToDoService;
+import com.minhductran.tutorial.minhductran.service.UserService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,8 @@ public class ToDoServiceImpl implements ToDoService {
     @Autowired
     private ToDoMapper toDoMapper;
 
+    @Override
+    @Transactional
     public ToDoDetailResponse createToDo(ToDoCreationDTO request) {
         User user = getUserById(request.getUserId());
         ToDo toDo = toDoMapper.toEntity(request);
@@ -42,6 +46,8 @@ public class ToDoServiceImpl implements ToDoService {
         return toDoMapper.toToDoDetailResponse(toDo);
     }
 
+    @Override
+    @Transactional
     public ToDoDetailResponse getToDo(int todoId) {
         return toDoMapper.toToDoDetailResponse(getToDoById(todoId));
     }
@@ -59,6 +65,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Transactional
     public ToDoDetailResponse updateToDo(int toDoId, ToDoUpdateDTO request) {
         User user = getUserById(request.getUserId());
         ToDo toDo = getToDoById(toDoId);
@@ -70,6 +77,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Transactional
     public void deleteToDo(int todoId) {
         toDoRepository.delete(getToDoById(todoId));
     }
@@ -81,6 +89,4 @@ public class ToDoServiceImpl implements ToDoService {
     public User getUserById(int userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
-
-
 }

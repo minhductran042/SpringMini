@@ -29,5 +29,5 @@ public class ToDoCreationDTO {
 
     private boolean completed;
 
-    private Integer userId; // Giả sử bạn muốn liên kết với người dùng đã tạo ToDo này
+    private Integer userId;// Giả sử bạn muốn liên kết với người dùng đã tạo ToDo này
 }
