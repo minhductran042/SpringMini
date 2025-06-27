@@ -20,4 +20,5 @@ public class ToDoUpdateDTO {
     @NotBlank(message = "Description cannot be blank")
     private String description;
     private boolean completed;
+    private Integer userId; // Giả sử bạn muốn liên kết với người dùng đã tạo ToDo này
 }
