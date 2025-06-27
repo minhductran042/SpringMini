@@ -2,10 +2,7 @@ package com.minhductran.tutorial.minhductran.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -27,6 +24,6 @@ public class User extends AbstractEntity {
     private String lastName;
     // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Todo> todos;
+    private List<ToDo> todos;
 
 }
