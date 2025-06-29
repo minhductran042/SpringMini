@@ -1,15 +1,19 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.minhductran.tutorial.minhductran.model.User;
+import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -25,9 +29,12 @@ public class ToDoCreationDTO {
     @NotBlank(message = "Description cannot be blank")
     private String description;
 
+    @NotNull(message = "startDate cannot be null")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "MM/dd/yyyy")
     private Date startDate;
 
-    private boolean completed;
+    private ToDoStatus status;
 
     private Integer userId;// Giả sử bạn muốn liên kết với người dùng đã tạo ToDo này
 }

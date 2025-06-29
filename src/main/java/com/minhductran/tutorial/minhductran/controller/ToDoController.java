@@ -30,6 +30,7 @@ public class ToDoController {
     ResponseData<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoCreationDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.createToDo(request);
+
             return new ResponseData<>(HttpStatus.CREATED.value(), "ToDo created successfully", toDo);
         } catch (Exception e) {
             return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
@@ -63,7 +64,7 @@ public class ToDoController {
     ResponseData updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoUpdateDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.updateToDo(todoId, request);
-            return new ResponseData<>(HttpStatus.CREATED.value(), "Created ToDo successfully", toDo);
+            return new ResponseData<>(HttpStatus.CREATED.value(), "Updated ToDo successfully", toDo);
         } catch (Exception e) {
             return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }

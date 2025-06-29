@@ -105,7 +105,6 @@ public class UserServiceImpl implements UserService {
     public User createUserWithTodo(UserCreationDTO request, ToDoCreationDTO todoRequest) {
         User user = userMapper.toEntity(request);
         user = userRepository.save(user);
-
         ToDo todo = toDoMapper.toEntity(todoRequest);
         todo.setUser(user);
         toDoRepository.save(todo);

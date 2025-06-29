@@ -11,6 +11,7 @@ import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.ToDoService;
 import com.minhductran.tutorial.minhductran.service.UserService;
+import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class ToDoServiceImpl implements ToDoService {
     public ToDoDetailResponse createToDo(ToDoCreationDTO request) {
         User user = getUserById(request.getUserId());
         ToDo toDo = toDoMapper.toEntity(request);
+        if(toDo.getStatus() == null) {
+            toDo.setStatus(ToDoStatus.NOT_STARTED);
+        }
         toDo.setUser(user);
         toDoRepository.save(toDo);
         return toDoMapper.toToDoDetailResponse(toDo);
@@ -49,7 +53,9 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     @Transactional
     public ToDoDetailResponse getToDo(int todoId) {
-        return toDoMapper.toToDoDetailResponse(getToDoById(todoId));
+        ToDo todo = getToDoById(todoId);
+        System.out.println("Todo status from DB: " + todo.getStatus());
+        return toDoMapper.toToDoDetailResponse(todo);
     }
 
     @Override
@@ -61,18 +67,24 @@ public class ToDoServiceImpl implements ToDoService {
         Sort sort = Sort.by(sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
         Page<ToDo>  toDos= toDoRepository.findAll(pageable);
+        log.info("Get all todos successfully");
         return toDos.stream().map(toDoMapper::toToDoDetailResponse).toList();
     }
 
     @Override
     @Transactional
     public ToDoDetailResponse updateToDo(int toDoId, ToDoUpdateDTO request) {
-        User user = getUserById(request.getUserId());
-        ToDo toDo = getToDoById(toDoId);
-        toDoMapper.updateEntity(toDo, request);
-        log.info("Update user successfully");
-        toDoRepository.save(toDo);
-        return toDoMapper.toToDoDetailResponse(toDo);
+        try {
+            User user = getUserById(request.getUserId());
+            ToDo toDo = getToDoById(toDoId);
+            toDoMapper.updateEntity(toDo, request);
+            log.info("Update user successfully");
+            toDoRepository.save(toDo);
+            return toDoMapper.toToDoDetailResponse(toDo);
+        } catch (Exception e) {
+            log.error("Error updating ToDo with ID {}: {}", toDoId, e.getMessage());
+            throw new ResourceNotFoundException("ToDo not found");
+        }
 
     }
 
@@ -83,10 +95,20 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     public ToDo getToDoById(int todoId) {
+
         return toDoRepository.findById(todoId).orElseThrow(() -> new ResourceNotFoundException("ToDo not found"));
     }
 
     public User getUserById(int userId) {
         return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+
+    @Override
+    public void changeToDoStatus(int todoId, ToDoStatus status) {
+        ToDo todo = getToDoById(todoId);
+        todo.setStatus(status);
+        log.info("Status changed");
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class UserCreationDTO {
     private String password;
 
     @NotBlank(message = "Phone number cannot be blank")
+    @Pattern(regexp = "^\\d{10}$", message = "Phone number must be exactly 10 digits")
     private String phone;
     @NotBlank(message = "First name cannot be blank")
     private String firstName;
