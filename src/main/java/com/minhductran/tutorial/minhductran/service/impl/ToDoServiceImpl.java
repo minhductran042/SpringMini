@@ -78,7 +78,7 @@ public class ToDoServiceImpl implements ToDoService {
             User user = getUserById(request.getUserId());
             ToDo toDo = getToDoById(toDoId);
             toDoMapper.updateEntity(toDo, request);
-            log.info("Update user successfully");
+            log.info("Update Todo successfully");
             toDoRepository.save(toDo);
             return toDoMapper.toToDoDetailResponse(toDo);
         } catch (Exception e) {

@@ -16,4 +16,5 @@ public interface ToDoService {
       public ToDoDetailResponse updateToDo(int todoId, ToDoUpdateDTO request);
       public void deleteToDo(int todoId);
       public void changeToDoStatus(int todoId, ToDoStatus status);
+
 }

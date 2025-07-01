@@ -1,6 +1,4 @@
 package com.minhductran.tutorial.minhductran.service.impl;
-
-
 import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
@@ -21,7 +19,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Slf4j
@@ -43,15 +48,16 @@ public class UserServiceImpl implements UserService {
     // Implement the methods from UserService interface here
     @Override
     @Transactional
-    public User createUser(UserCreationDTO request) {
+    public UserDetailRespone createUser(UserCreationDTO request) {
 
         if(userRepository.existsByUsername(request.getUsername())) {
             throw new ResourceNotFoundException("USERNAME ALREADY EXISTS");
         }
+        log.info("Creating user successfully");
 
         User user = userMapper.toEntity(request);
-        log.info("Creating user successfully");
-        return userRepository.save(user);
+        userRepository.save(user);
+        return userMapper.toUserDetailResponse(user);
     }
 
     @Override
@@ -110,4 +116,37 @@ public class UserServiceImpl implements UserService {
         toDoRepository.save(todo);
         return user;
     }
+
+    public void uploadImage(int userId, MultipartFile multipartFile) {
+        User user = getUserById(userId);
+        try {
+            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+            if(user.getLogo() != null && !user.getLogo().isEmpty()) {
+                Path oldFilePath = Paths.get("uploads").resolve(user.getLogo());
+                if(Files.exists(oldFilePath)) {
+                    Files.delete(oldFilePath);
+                    log.info("Deleted old image file: {}", user.getLogo());
+                }
+            }
+
+            Path uploadDirectory = Paths.get("uploads");
+            if (!Files.exists(uploadDirectory)) {
+                Files.createDirectories(uploadDirectory);
+            }
+
+            InputStream inputStream = multipartFile.getInputStream();
+            Path filePath = uploadDirectory.resolve(fileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            user.setLogo(fileName);
+            userRepository.save(user);
+
+            log.info("Image uploaded successfully for user with ID {}", userId);
+
+        } catch (Exception e) {
+            log.error("Error uploading image for user with ID {}: {}", userId, e.getMessage());
+            throw new RuntimeException("Failed to upload image: " + e.getMessage());
+        }
+    }
 }
+

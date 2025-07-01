@@ -1,20 +1,19 @@
 package com.minhductran.tutorial.minhductran.controller;
-import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponeErrorDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
-import com.minhductran.tutorial.minhductran.model.ToDo;
 import com.minhductran.tutorial.minhductran.model.User;
-import com.minhductran.tutorial.minhductran.service.ToDoService;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,16 +23,15 @@ import java.util.List;
 @Validated
 @Slf4j
 public class UserController {
-
     @Autowired
     private UserService userService;
 
     @PostMapping("create")
-    ResponseData<User> createUser(@RequestBody @Valid UserCreationDTO request) {
+    ResponseData<UserDetailRespone> createUser(@RequestPart @Valid UserCreationDTO request) {
         log.info("Request to create user, {} {}", request.getFirstName(), request.getLastName());
         try {
-            User user = userService.createUser(request);
-            return new ResponseData<User>(HttpStatus.CREATED.value(), "User created successfully", user);
+            UserDetailRespone user = userService.createUser(request);
+            return new ResponseData<>(HttpStatus.CREATED.value(), "User created successfully", user);
         } catch (Exception e) {
             return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
@@ -82,8 +80,19 @@ public class UserController {
         } catch (Exception e) {
             return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
-
     }
 
+    @PostMapping("/upload/{userId}")
+    public String uploadFile(@PathVariable int userId ,
+                           @RequestParam("image") MultipartFile multipartFile) {
+        try {
+            userService.uploadImage(userId, multipartFile);
+            return "Image uploaded successfully for user with ID: " + userId;
+        }
+        catch (Exception e) {
+            log.error("Error uploading image for user with ID {}: {}", userId, e.getMessage());
+            throw new RuntimeException("Failed to upload image: " + e.getMessage());
+        }
+    }
 
 }

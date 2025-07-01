@@ -15,4 +15,5 @@ public class UserDetailRespone {
     private String phone;
     private String firstName;
     private String lastName;
+    private String logo;
 }

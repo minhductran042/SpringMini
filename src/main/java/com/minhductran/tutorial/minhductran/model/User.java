@@ -25,5 +25,6 @@ public class User extends AbstractEntity {
     // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ToDo> todos;
-
+    @Column(name = "logo")
+    private String logo; // Thêm trường logo lưu trữ ảnh đại diện của người dùng
 }
