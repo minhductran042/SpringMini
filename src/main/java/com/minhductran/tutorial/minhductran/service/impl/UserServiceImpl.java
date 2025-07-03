@@ -1,5 +1,5 @@
 package com.minhductran.tutorial.minhductran.service.impl;
-import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User createUserWithTodo(UserCreationDTO request, ToDoCreationDTO todoRequest) {
+    public User createUserWithTodo(UserCreationDTO request, ToDoDTO todoRequest) {
         User user = userMapper.toEntity(request);
         user = userRepository.save(user);
         ToDo todo = toDoMapper.toEntity(todoRequest);

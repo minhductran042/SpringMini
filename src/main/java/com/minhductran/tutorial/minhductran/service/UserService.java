@@ -1,6 +1,6 @@
 package com.minhductran.tutorial.minhductran.service;
 
-import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
@@ -15,6 +15,6 @@ public interface UserService {
     public UserDetailRespone getUser(int userId);
     public UserDetailRespone updateUser(int userId,UserUpdateDTO request);
     public void deleteUser(int userId);
-    public User createUserWithTodo(UserCreationDTO request, ToDoCreationDTO rquest);
+    public User createUserWithTodo(UserCreationDTO request, ToDoDTO rquest);
     public void uploadImage(int userId, MultipartFile multipartFile);
 }

@@ -1,7 +1,6 @@
 package com.minhductran.tutorial.minhductran.service.impl;
 
-import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
-import com.minhductran.tutorial.minhductran.dto.request.ToDoUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ToDoDetailResponse;
 import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.mappers.ToDoMapper;
@@ -10,7 +9,6 @@ import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.ToDoService;
-import com.minhductran.tutorial.minhductran.service.UserService;
 import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -39,7 +38,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     @Transactional
-    public ToDoDetailResponse createToDo(ToDoCreationDTO request) {
+    public ToDoDetailResponse createToDo(ToDoDTO request) {
         User user = getUserById(request.getUserId());
         ToDo toDo = toDoMapper.toEntity(request);
         if(toDo.getStatus() == null) {
@@ -73,7 +72,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     @Transactional
-    public ToDoDetailResponse updateToDo(int toDoId, ToDoUpdateDTO request) {
+    public ToDoDetailResponse updateToDo(int toDoId, ToDoDTO request) {
         try {
             User user = getUserById(request.getUserId());
             ToDo toDo = getToDoById(toDoId);
@@ -111,4 +110,33 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
 
+    @Override
+    public List<ToDoDetailResponse> getToDoFromFilter(Date date, ToDoStatus status) {
+        try{
+            List<ToDo> toDos = toDoRepository.findAll();
+            if(date != null) {
+                toDos.removeIf(toDo -> toDo.getStartDate() == null||  !toDo.getStartDate().equals(date));
+            }
+            if(status != null) {
+                toDos.removeIf(toDo -> toDo.getStartDate() == null||  !toDo.getStatus().equals(status));
+            }
+//
+//        int page = 0;
+//        if(pageNo > 0) {
+//            page = pageNo - 1;
+//        }
+////
+//        Sort sort = Sort.by(sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+//        int start = page * pageSize;
+//        int end = Math.min(start + pageSize, toDos.size());
+//
+//        List<ToDo> pagedToDos = toDos.subList(start, end);
+            log.info("Get todos successfully");
+            return toDos.stream().map(toDoMapper::toToDoDetailResponse).toList();
+        } catch (Exception e) {
+            log.error("Error getting todos from filter: {}", e.getMessage());
+            throw new ResourceNotFoundException("ToDo not found");
+        }
+
+    }
 }

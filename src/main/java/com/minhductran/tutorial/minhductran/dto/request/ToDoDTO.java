@@ -1,12 +1,7 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,8 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class ToDoCreationDTO {
-
+public class ToDoDTO {
     @NotBlank(message = "Title cannot be blank")
     @Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
     private String title;

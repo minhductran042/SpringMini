@@ -1,20 +1,21 @@
 package com.minhductran.tutorial.minhductran.controller;
 
 
-import com.minhductran.tutorial.minhductran.dto.request.ToDoCreationDTO;
-import com.minhductran.tutorial.minhductran.dto.request.ToDoUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponeErrorDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
 import com.minhductran.tutorial.minhductran.dto.response.ToDoDetailResponse;
-import com.minhductran.tutorial.minhductran.model.ToDo;
 import com.minhductran.tutorial.minhductran.service.ToDoService;
+import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class ToDoController {
     private ToDoService toDoService;
 
     @PostMapping("create")
-    ResponseData<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoCreationDTO request) {
+    ResponseData<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.createToDo(request);
 
@@ -61,7 +62,7 @@ public class ToDoController {
     }
 
     @PutMapping("update/{todoId}")
-    ResponseData updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoUpdateDTO request) {
+    ResponseData updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.updateToDo(todoId, request);
             return new ResponseData<>(HttpStatus.CREATED.value(), "Updated ToDo successfully", toDo);
@@ -77,6 +78,21 @@ public class ToDoController {
             return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "ToDo deleted successfully");
         } catch (Exception e) {
             return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    @GetMapping()
+    public ResponseData<List<ToDoDetailResponse>> getToDoFromFilter(
+            @RequestParam (required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
+            @RequestParam (required = false) ToDoStatus toDoStatus
+            ) {
+        try {
+//            List<ToDoDetailResponse> toDosFromFilter = toDoService.getToDoFromFilter(date, toDoStatus,
+//                    pageNo, pageSize, sortBy, sortOrder);
+            List<ToDoDetailResponse> toDosFromFilter = toDoService.getToDoFromFilter(date, toDoStatus);
+            return new ResponseData<>(HttpStatus.OK.value(), "Get ToDo successfully", toDosFromFilter);
+        } catch (Exception e) {
+            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), "Error getting ToDos: " + e.getMessage());
         }
     }
 }
