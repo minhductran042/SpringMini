@@ -27,7 +27,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("create")
-    ResponseData<UserDetailRespone> createUser(@RequestPart @Valid UserCreationDTO request) {
+    ResponseData<UserDetailRespone> createUser(@RequestBody @Valid UserCreationDTO request) {
         log.info("Request to create user, {} {}", request.getFirstName(), request.getLastName());
         try {
             UserDetailRespone user = userService.createUser(request);

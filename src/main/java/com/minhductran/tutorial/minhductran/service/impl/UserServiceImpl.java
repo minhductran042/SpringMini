@@ -106,6 +106,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
+    //[POST] /user/createWithTodo: Create a use with a ToDo item
     @Override
     @Transactional
     public User createUserWithTodo(UserCreationDTO request, ToDoDTO todoRequest) {
@@ -117,6 +118,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    //[POST] /user/uploadImage: Upload an image for a user
     public void uploadImage(int userId, MultipartFile multipartFile) {
         User user = getUserById(userId);
         try {

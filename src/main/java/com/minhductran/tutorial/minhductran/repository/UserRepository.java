@@ -9,5 +9,4 @@ public interface UserRepository extends JpaRepository<User,Integer> {
     boolean existsByUsername(String username); //Spring JPA tu generate query kiem tra su ton tai
     // username vs username ta truyen vao
 
-
 }

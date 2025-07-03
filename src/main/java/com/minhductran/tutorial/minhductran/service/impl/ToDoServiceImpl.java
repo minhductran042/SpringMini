@@ -73,18 +73,12 @@ public class ToDoServiceImpl implements ToDoService {
     @Override
     @Transactional
     public ToDoDetailResponse updateToDo(int toDoId, ToDoDTO request) {
-        try {
             User user = getUserById(request.getUserId());
             ToDo toDo = getToDoById(toDoId);
             toDoMapper.updateEntity(toDo, request);
             log.info("Update Todo successfully");
             toDoRepository.save(toDo);
             return toDoMapper.toToDoDetailResponse(toDo);
-        } catch (Exception e) {
-            log.error("Error updating ToDo with ID {}: {}", toDoId, e.getMessage());
-            throw new ResourceNotFoundException("ToDo not found");
-        }
-
     }
 
     @Override

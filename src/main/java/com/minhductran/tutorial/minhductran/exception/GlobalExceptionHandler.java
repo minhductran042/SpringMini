@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     public ResponseError handleValidationException(Exception error, WebRequest request) { // request được dùng đê lấy request
         ResponseError errorResponse = new ResponseError();
 
-        errorResponse.setTimestampe(new Date());
+        errorResponse.setTimestamp(new Date());
 
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
 
@@ -35,4 +35,24 @@ public class GlobalExceptionHandler {
         errorResponse.setMessage(message); // Lấy message lỗi
         return errorResponse;
     }
+
+    @ExceptionHandler({ResourceNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseError handleResourceNotFoundException(ResourceNotFoundException error, WebRequest request) { // request được dùng để lấy path
+        ResponseError responseError = new ResponseError();
+        responseError.setTimestamp(new Date());
+        responseError.setStatus(HttpStatus.NOT_FOUND.value());
+        responseError.setPath(request.getDescription(false).replace("uri=", "")); // Lấy đường dẫn của request lỗi
+        responseError.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
+        String message = error.getMessage();
+        int start = message.lastIndexOf("[");
+        int end = message.lastIndexOf("]");
+        message = message.substring(start+1, end -1); // Lấy message lỗi
+
+        responseError.setMessage(message); // Lấy message lỗi
+        return responseError;
+
+    }
+
+
 }

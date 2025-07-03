@@ -8,7 +8,7 @@ import java.util.Date;
 @Getter
 @Setter
 public class ResponseError {
-    private Date timestampe;
+    private Date timestamp;
     private int status;
     private String path;// Đường dẫn của request lỗi
     private String error;
