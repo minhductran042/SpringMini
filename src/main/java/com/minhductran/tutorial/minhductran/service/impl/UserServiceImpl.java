@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService {
         Sort sort = Sort.by(sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
         Pageable pageable = PageRequest.of(page, pageSize, sort);
         Page<User> users = userRepository.findAll(pageable);
+        users.forEach(user -> log.info("User: {}, Logo: {}", user.getUsername(), user.getLogo()));
         return users.stream().map(userMapper::toUserDetailResponse).toList();
     }
 

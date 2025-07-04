@@ -51,7 +51,6 @@ public class GlobalExceptionHandler {
 
         responseError.setMessage(message); // Lấy message lỗi
         return responseError;
-
     }
 
 
