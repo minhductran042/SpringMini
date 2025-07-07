@@ -21,3 +21,7 @@ openapi:
     service: http://localhost:${server_port}
     title: API Services
     version: 1.0.0
+
+jwt:
+  accessKey: 6X48eG6MIx3ynHl3f5YYXNwhU7IMU22IKxb48T1nW3s=
+  refreshKey: h3uwBpfBZNbHmk5W9V5062sywWecCdiETnlRsfjsz9U=

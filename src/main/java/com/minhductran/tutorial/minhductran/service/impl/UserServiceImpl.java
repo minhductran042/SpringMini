@@ -1,6 +1,7 @@
 package com.minhductran.tutorial.minhductran.service.impl;
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.UserPasswordRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.mappers.ToDoMapper;
@@ -11,6 +12,8 @@ import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
+import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
+import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +44,9 @@ public class UserServiceImpl implements UserService {
     public ToDoRepository toDoRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -56,6 +63,12 @@ public class UserServiceImpl implements UserService {
         log.info("Creating user successfully");
 
         User user = userMapper.toEntity(request);
+
+        if(user.getStatus() == null) {
+            user.setStatus(UserStatus.NONE);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         return userMapper.toUserDetailResponse(user);
     }
@@ -150,6 +163,20 @@ public class UserServiceImpl implements UserService {
             log.error("Error uploading image for user with ID {}: {}", userId, e.getMessage());
             throw new RuntimeException("Failed to upload image: " + e.getMessage());
         }
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+    @Override
+    public void changePassword(UserPasswordRequest request) {
+        log.info("Changing password for user with ID {}", request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername());
+        if(request.getPassword().equals(request.getConfirmPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(user);
+        log.info("Password changed successfully for user with ID {}", request.getUsername());
     }
 }
 

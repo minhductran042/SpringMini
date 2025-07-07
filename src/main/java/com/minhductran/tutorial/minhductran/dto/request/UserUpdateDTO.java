@@ -19,5 +19,5 @@ public class UserUpdateDTO {
     private String firstName;
     @NotBlank(message = "Last name cannot be blank")
     private String lastName;
-
+    private String email;
 }

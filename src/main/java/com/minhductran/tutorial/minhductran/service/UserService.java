@@ -2,6 +2,7 @@ package com.minhductran.tutorial.minhductran.service;
 
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.UserPasswordRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.model.User;
@@ -17,4 +18,5 @@ public interface UserService {
     public void deleteUser(int userId);
     public User createUserWithTodo(UserCreationDTO request, ToDoDTO rquest);
     public void uploadImage(int userId, MultipartFile multipartFile);
+    public void changePassword(UserPasswordRequest request);
 }

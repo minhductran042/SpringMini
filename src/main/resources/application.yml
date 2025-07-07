@@ -8,3 +8,6 @@ spring:
       name: logs/application.log
     level:
       root: INFO #TRACE->DEBUG->INFO->WARN->ERROR
+
+project:
+  logo: logo/

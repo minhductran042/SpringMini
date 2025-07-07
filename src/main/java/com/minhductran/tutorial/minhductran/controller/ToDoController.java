@@ -2,8 +2,8 @@ package com.minhductran.tutorial.minhductran.controller;
 
 
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
-import com.minhductran.tutorial.minhductran.dto.response.ResponeErrorDTO;
-import com.minhductran.tutorial.minhductran.dto.response.ResponseData;
+import com.minhductran.tutorial.minhductran.dto.response.ResponseErrorEntity;
+import com.minhductran.tutorial.minhductran.dto.response.ResponseEntity;
 import com.minhductran.tutorial.minhductran.dto.response.ToDoDetailResponse;
 import com.minhductran.tutorial.minhductran.service.ToDoService;
 import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/todos")
+@RequestMapping("/todos")
 @Validated
 @Slf4j
 public class ToDoController {
@@ -28,61 +28,61 @@ public class ToDoController {
     private ToDoService toDoService;
 
     @PostMapping("create")
-    ResponseData<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoDTO request) {
+    ResponseEntity<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.createToDo(request);
 
-            return new ResponseData<>(HttpStatus.CREATED.value(), "ToDo created successfully", toDo);
+            return new ResponseEntity<>(HttpStatus.CREATED.value(), "ToDo created successfully", toDo);
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
     @GetMapping("get/{todoId}")
-    ResponseData<ToDoDetailResponse> getToDo(@PathVariable int todoId) {
+    ResponseEntity<ToDoDetailResponse> getToDo(@PathVariable int todoId) {
         try {
             ToDoDetailResponse toDo = toDoService.getToDo(todoId);
-            return new ResponseData<>(HttpStatus.OK.value(), "Get ToDo successfully", toDo);
+            return new ResponseEntity<>(HttpStatus.OK.value(), "Get ToDo successfully", toDo);
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), "ToDo not found");
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), "ToDo not found");
         }
     }
 
     @GetMapping("getAll")
-    ResponseData<List<ToDoDetailResponse>> getAllToDos(@RequestParam(defaultValue = "0", required = false) int pageNo,
-                                                       @RequestParam(defaultValue = "20", required = false) int pageSize,
-                                                       @RequestParam(defaultValue = "id", required = false) String sortBy,
-                                                       @RequestParam(defaultValue = "asc", required = false) String sortOrder) {
+    ResponseEntity<List<ToDoDetailResponse>> getAllToDos(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                         @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                         @RequestParam(defaultValue = "id", required = false) String sortBy,
+                                                         @RequestParam(defaultValue = "asc", required = false) String sortOrder) {
         try {
             List<ToDoDetailResponse> toDos = toDoService.getAllToDos(pageNo, pageSize, sortBy, sortOrder);
-            return new ResponseData<>(HttpStatus.OK.value(), "Get all ToDos successfully", toDos);
+            return new ResponseEntity<>(HttpStatus.OK.value(), "Get all ToDos successfully", toDos);
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
     @PutMapping("update/{todoId}")
-    ResponseData updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoDTO request) {
+    ResponseEntity updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.updateToDo(todoId, request);
-            return new ResponseData<>(HttpStatus.CREATED.value(), "Updated ToDo successfully", toDo);
+            return new ResponseEntity<>(HttpStatus.CREATED.value(), "Updated ToDo successfully", toDo);
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
     @DeleteMapping("delete/{todoId}")
-    ResponseData<?> deleteToDo(@PathVariable int todoId) {
+    ResponseEntity<?> deleteToDo(@PathVariable int todoId) {
         try {
             toDoService.deleteToDo(todoId);
-            return new ResponseData<>(HttpStatus.NO_CONTENT.value(), "ToDo deleted successfully");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT.value(), "ToDo deleted successfully");
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
     @GetMapping()
-    public ResponseData<List<ToDoDetailResponse>> getToDoFromFilter(
+    public ResponseEntity<List<ToDoDetailResponse>> getToDoFromFilter(
             @RequestParam (required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date date,
             @RequestParam (required = false) ToDoStatus toDoStatus
             ) {
@@ -90,9 +90,9 @@ public class ToDoController {
 //            List<ToDoDetailResponse> toDosFromFilter = toDoService.getToDoFromFilter(date, toDoStatus,
 //                    pageNo, pageSize, sortBy, sortOrder);
             List<ToDoDetailResponse> toDosFromFilter = toDoService.getToDoFromFilter(date, toDoStatus);
-            return new ResponseData<>(HttpStatus.OK.value(), "Get ToDo successfully", toDosFromFilter);
+            return new ResponseEntity<>(HttpStatus.OK.value(), "Get ToDo successfully", toDosFromFilter);
         } catch (Exception e) {
-            return new ResponeErrorDTO(HttpStatus.BAD_REQUEST.value(), "Error getting ToDos: " + e.getMessage());
+            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), "Error getting ToDos: " + e.getMessage());
         }
     }
 }

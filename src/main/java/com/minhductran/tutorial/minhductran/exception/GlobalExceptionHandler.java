@@ -1,5 +1,8 @@
 package com.minhductran.tutorial.minhductran.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,16 +20,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseError handleValidationException(Exception error, WebRequest request) { // request được dùng đê lấy request
         ResponseError errorResponse = new ResponseError();
-
         errorResponse.setTimestamp(new Date());
-
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-
         errorResponse.setPath(request.getDescription(false)
                 .replace("uri=",""));//Lấy đường dẫn của request lỗi
-
         errorResponse.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
-
         String message = error.getMessage();
         int start = message.lastIndexOf("[");
         int end = message.lastIndexOf("]");
@@ -36,22 +34,28 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-    @ExceptionHandler({ResourceNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseError handleResourceNotFoundException(ResourceNotFoundException error, WebRequest request) { // request được dùng để lấy path
-        ResponseError responseError = new ResponseError();
-        responseError.setTimestamp(new Date());
-        responseError.setStatus(HttpStatus.NOT_FOUND.value());
-        responseError.setPath(request.getDescription(false).replace("uri=", "")); // Lấy đường dẫn của request lỗi
-        responseError.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
-        String message = error.getMessage();
-        int start = message.lastIndexOf("[");
-        int end = message.lastIndexOf("]");
-        message = message.substring(start+1, end -1); // Lấy message lỗi
+    public ResponseError handleResourceNotFoundException(Exception error, WebRequest request) {
+        ResponseError errorResponse = new ResponseError();
+        errorResponse.setTimestamp(new Date());
+        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        errorResponse.setError(HttpStatus.NOT_FOUND.getReasonPhrase());
+        errorResponse.setMessage(error.getMessage());
 
-        responseError.setMessage(message); // Lấy message lỗi
-        return responseError;
+        return errorResponse;
     }
 
-
+    @Getter
+    @Setter
+    public class ResponseError {
+        private Date timestamp;
+        private int status;
+        private String path;// Đường dẫn của request lỗi
+        private String error;
+        private String message;
+    }
 }
+
+
+
+

@@ -11,9 +11,13 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "email", source = "email")
     User toEntity(UserCreationDTO request);
 
     @Mapping(target = "logo", source = "logo")
+    @Mapping(target = "status", source = "status")
     UserDetailRespone toUserDetailResponse(User user);
     void updateEntity(@MappingTarget User user, UserUpdateDTO request);
 }

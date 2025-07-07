@@ -25,7 +25,7 @@ public class ToDoDTO {
 
     @NotNull(message = "startDate cannot be null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @JsonFormat(pattern = "MM/dd/yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
     private ToDoStatus status;
