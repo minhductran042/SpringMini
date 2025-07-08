@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,21 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+    @ExceptionHandler({AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseError handleAccessDeniedException(Exception error, WebRequest request) {
+        ResponseError errorResponse = new ResponseError();
+        errorResponse.setTimestamp(new Date());
+        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponse.setStatus(HttpStatus.FORBIDDEN.value());
+        errorResponse.setError(HttpStatus.FORBIDDEN.getReasonPhrase());
+        errorResponse.setMessage(error.getMessage());
+
+        return errorResponse;
+    }
+
+    @ExceptionHandler({ResourceNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseError handleResourceNotFoundException(Exception error, WebRequest request) {
         ResponseError errorResponse = new ResponseError();
         errorResponse.setTimestamp(new Date());
@@ -44,6 +60,7 @@ public class GlobalExceptionHandler {
 
         return errorResponse;
     }
+
 
     @Getter
     @Setter
