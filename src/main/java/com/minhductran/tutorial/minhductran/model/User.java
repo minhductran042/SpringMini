@@ -3,14 +3,15 @@ package com.minhductran.tutorial.minhductran.model;
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,11 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "users")
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tu dong tang id khi tao moi entity
-    @Column(name = "id")
-    private int id;
+@Slf4j
+public class User extends AbstractEntity implements UserDetails {
+
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
@@ -42,7 +41,7 @@ public class User implements UserDetails {
     private String lastName;
 
     // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // lazy: chi tai todo khi user goi getTodoList
     private List<ToDo> todos;
 
     @Column(name = "user_status")
@@ -52,19 +51,11 @@ public class User implements UserDetails {
     @Column(name = "logo")
     private String logo; // Thêm trường logo lưu trữ ảnh đại diện của người dùng
 
-    @Column(name = "created_at")
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    Set<String> roles = new HashSet<>(); // Thêm trường roles để lưu trữ các quyền của người dùng
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return Collections.emptyList();
     }
 
     @Override
@@ -84,6 +75,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return UserStatus.ACTIVE.equals(status);
+    }
+
+    @Override
+    public String getUsername() {
+        return email; // Quan trọng: return email làm username
     }
 }

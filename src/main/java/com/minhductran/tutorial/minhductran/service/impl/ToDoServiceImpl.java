@@ -50,7 +50,6 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
-    @Transactional
     public ToDoDetailResponse getToDo(int todoId) {
         ToDo todo = getToDoById(todoId);
         System.out.println("Todo status from DB: " + todo.getStatus());
@@ -97,6 +96,7 @@ public class ToDoServiceImpl implements ToDoService {
     }
 
     @Override
+    @Transactional
     public void changeToDoStatus(int todoId, ToDoStatus status) {
         ToDo todo = getToDoById(todoId);
         todo.setStatus(status);
@@ -126,6 +126,7 @@ public class ToDoServiceImpl implements ToDoService {
 //
 //        List<ToDo> pagedToDos = toDos.subList(start, end);
             log.info("Get todos successfully");
+
             return toDos.stream().map(toDoMapper::toToDoDetailResponse).toList();
         } catch (Exception e) {
             log.error("Error getting todos from filter: {}", e.getMessage());

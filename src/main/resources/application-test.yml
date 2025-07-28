@@ -4,6 +4,12 @@ spring:
   config:
     activate:
       on-profile: test
+  logging:
+    file:
+      name: logs/application-prod.log
+    level:
+      root: ERROR
+      com.example: WARN  # Giả sử package ứng dụng của bạn là com.example
 openapi:
   service:
     api-docs: api-services

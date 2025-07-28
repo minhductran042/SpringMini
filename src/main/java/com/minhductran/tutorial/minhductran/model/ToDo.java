@@ -14,12 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "to_dos")
-public class ToDo {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tu dong tang id khi tao moi entity
-    @Column(name = "id")
-    private int id;
+public class ToDo extends AbstractEntity {
 
     @Column(name = "title")
     private String title;
@@ -35,17 +30,8 @@ public class ToDo {
 //    @JdbcTypeCode(SqlTypes.NAMED_ENUM) // Su dung để lưu trữ enum trong cơ sở dữ liệu
     private ToDoStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)  // tai truoc tat ca
     @JoinColumn(name = "user_id") // Khóa ngoại tham chiếu đến bảng users
     private User user;
 
-    @Column(name = "created_at")
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
 }

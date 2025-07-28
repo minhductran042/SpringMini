@@ -1,9 +1,11 @@
 package com.minhductran.tutorial.minhductran.dto.request;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-public class SignInRequest {
-    private String username;
+@Setter
+public class LoginUserDto {
+    private String email;
     private String password;
 }

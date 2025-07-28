@@ -5,11 +5,14 @@ import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseErrorEntity;
 import com.minhductran.tutorial.minhductran.dto.response.ResponseEntity;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
+import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,13 +30,20 @@ public class UserController {
 
     @PostMapping("create")
     ResponseEntity<UserDetailRespone> createUser(@RequestBody @Valid UserCreationDTO request) {
-        log.info("Request to create user, {} {}", request.getFirstName(), request.getLastName());
+
         try {
             UserDetailRespone user = userService.createUser(request);
             return new ResponseEntity<>(HttpStatus.CREATED.value(), "User created successfully", user);
         } catch (Exception e) {
             return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
+    }
+
+    @GetMapping("/me")
+    public org.springframework.http.ResponseEntity<User> authenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) authentication.getPrincipal();
+        return org.springframework.http.ResponseEntity.ok(currentUser);
     }
 
     @GetMapping("getAll")

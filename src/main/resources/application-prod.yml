@@ -4,6 +4,11 @@ spring:
   config:
     activate:
       on-profile: prod
+  logging:
+    file:
+      name: logs/application-test.log
+    level:
+      root: WARN
 openapi:
   service:
     api-docs: api-services

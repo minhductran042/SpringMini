@@ -1,36 +1,43 @@
 package com.minhductran.tutorial.minhductran.controller;
 
-import com.minhductran.tutorial.minhductran.dto.request.SignInRequest;
-import com.minhductran.tutorial.minhductran.dto.response.TokenResponse;
+import com.minhductran.tutorial.minhductran.dto.request.LoginUserDto;
+import com.minhductran.tutorial.minhductran.dto.response.LoginResponse;
+import com.minhductran.tutorial.minhductran.model.User;
+import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.AuthenticationService;
-import com.minhductran.tutorial.minhductran.service.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.minhductran.tutorial.minhductran.service.JwtService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
 @RequestMapping("/auth")
-@Slf4j(topic = "AUTHENTICATION_CONTROLLER")
-@RequiredArgsConstructor
+@RestController
+@AllArgsConstructor
 public class AuthenticationController {
-
+    private final JwtService jwtService;
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/access-token")
-    public TokenResponse getAccessToken(@RequestBody SignInRequest request) {
-        log.info("Access Token Request");
-        return authenticationService.getAccessToken(request);
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto){
+        User authenticatedUser = authenticationService.authenticate(loginUserDto);
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/refresh-token")
-    public TokenResponse getRefreshToken(@RequestBody String refreshToken) {
-        log.info("Refresh Token Request");
-        return TokenResponse.builder()
-                .accessToken("ACCESS_NEW_TOKEN")
-                .refreshToken("DUMMY_REFRESH_TOKEN")
-                .build();
+    // Thêm endpoint để lấy thông tin user hiện tại
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User currentUser = (User) authentication.getPrincipal();
+            // Không trả về password
+            currentUser.setPassword(null);
+            return ResponseEntity.ok(currentUser);
+        }
+        return ResponseEntity.status(401).build();
     }
 }

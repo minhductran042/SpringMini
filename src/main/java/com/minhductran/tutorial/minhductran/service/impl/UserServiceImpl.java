@@ -12,6 +12,7 @@ import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
+import com.minhductran.tutorial.minhductran.utils.Role;
 import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.transaction.Transactional;
@@ -31,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -65,23 +67,27 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(request);
 
         if(user.getStatus() == null) {
-            user.setStatus(UserStatus.NONE);
+            user.setStatus(UserStatus.ACTIVE);
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        user.setRoles(roles);
+
         userRepository.save(user);
         return userMapper.toUserDetailResponse(user);
     }
 
     @Override
-    @Transactional
     public UserDetailRespone getUser(int userId) {
         User user = getUserById(userId);
         return userMapper.toUserDetailResponse(user);
     }
 
     @Override
-    @Transactional
     public List<UserDetailRespone> getAllUsers(int pageNo, int pageSize, String sortBy, String sortOrder) {
 
         int page = 0;
@@ -132,6 +138,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     //[POST] /user/uploadImage: Upload an image for a user
     public void uploadImage(int userId, MultipartFile multipartFile) {
         User user = getUserById(userId);
