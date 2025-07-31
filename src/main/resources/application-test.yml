@@ -10,6 +10,24 @@ spring:
     level:
       root: ERROR
       com.example: WARN  # Giả sử package ứng dụng của bạn là com.example
+
+# Cấu hình logging cho TEST environment
+logging:
+  file:
+    name: logs/application-test.log
+  level:
+    root: ERROR
+    com.minhductran.tutorial: WARN  # Chỉ log WARN trở lên cho test
+    org.springframework: ERROR
+    org.hibernate: ERROR
+    org.springframework.test: INFO   # Log thông tin test
+    org.junit: INFO                  # Log thông tin JUnit
+    org.testcontainers: INFO         # Nếu sử dụng TestContainers
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [TEST] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [TEST] %logger{36} - %msg%n"
+
+
 openapi:
   service:
     api-docs: api-services

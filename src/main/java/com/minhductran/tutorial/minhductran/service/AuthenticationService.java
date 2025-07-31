@@ -1,10 +1,8 @@
 package com.minhductran.tutorial.minhductran.service;
 
-import com.minhductran.tutorial.minhductran.dto.request.LoginUserDto;
+import com.minhductran.tutorial.minhductran.dto.request.User.LoginUserDto;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,5 +35,10 @@ public class AuthenticationService {
         );
 
         return user;
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElse(null);
     }
 }

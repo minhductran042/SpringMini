@@ -1,9 +1,8 @@
 package com.minhductran.tutorial.minhductran.controller;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
-import com.minhductran.tutorial.minhductran.dto.request.UserPasswordRequest;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserPasswordRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
-import com.minhductran.tutorial.minhductran.dto.response.ResponseErrorEntity;
-import com.minhductran.tutorial.minhductran.dto.response.ResponseEntity;
+import com.minhductran.tutorial.minhductran.dto.response.ApiResponse;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.service.UserService;
@@ -29,90 +28,90 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("create")
-    ResponseEntity<UserDetailRespone> createUser(@RequestBody @Valid UserCreationDTO request) {
+    ApiResponse<UserDetailRespone> createUser(@RequestBody @Valid UserCreationDTO request) {
 
         try {
             UserDetailRespone user = userService.createUser(request);
-            return new ResponseEntity<>(HttpStatus.CREATED.value(), "User created successfully", user);
+            return new ApiResponse<>(HttpStatus.CREATED.value(), "User created successfully", user);
         } catch (Exception e) {
-            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
-    @GetMapping("/me")
+    @GetMapping("me")
     public org.springframework.http.ResponseEntity<User> authenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = (User) authentication.getPrincipal();
         return org.springframework.http.ResponseEntity.ok(currentUser);
     }
 
-    @GetMapping("getAll")
-    ResponseEntity<List<UserDetailRespone>> getAllUsers(@RequestParam(defaultValue = "0", required = false) int pageNo,
-                                                        @RequestParam (defaultValue = "20", required = false) int pageSize,
-                                                        @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                        @RequestParam (defaultValue = "asc", required = false) String sortOrder) {
+    @GetMapping("list")
+    ApiResponse<List<UserDetailRespone>> getAllUsers(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                     @RequestParam (defaultValue = "20", required = false) int pageSize,
+                                                     @RequestParam (defaultValue = "id", required = false) String sortBy,
+                                                     @RequestParam (defaultValue = "asc", required = false) String sortOrder) {
         try {
             List<UserDetailRespone> users = userService.getAllUsers(pageNo, pageSize, sortBy, sortOrder);
-            return new ResponseEntity<List<UserDetailRespone>>(HttpStatus.OK.value(),
+            return new ApiResponse<List<UserDetailRespone>>(HttpStatus.OK.value(),
                     "Get all users successfully", users);
         } catch (Exception e) {
             log.error("Error getting all users: {}", e.getMessage());
-            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
 
     }
 
     @GetMapping("get/{userId}")
-    ResponseEntity<UserDetailRespone> getUser(@PathVariable int userId) {
+    ApiResponse<UserDetailRespone> getUser(@PathVariable int userId) {
         try {
             UserDetailRespone user = userService.getUser(userId);
-            return new ResponseEntity<UserDetailRespone>(HttpStatus.OK.value(),
+            return new ApiResponse<UserDetailRespone>(HttpStatus.OK.value(),
                     "Get user successfully", user);
         } catch (Exception e) {
             log.error("Error getting user with ID {}: {}", userId, e.getMessage());
-            return new ResponseErrorEntity(HttpStatus.NOT_FOUND.value(), e.getMessage());
+            return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), e.getMessage());
         }
 
     }
 
     @PutMapping("update/{userId}")
-    ResponseEntity<UserDetailRespone> updateUser(@PathVariable int userId,
-                                                 @RequestPart MultipartFile multipartFile,
-                                                 @RequestBody @Valid UserUpdateDTO request ) {
+    ApiResponse<UserDetailRespone> updateUser(@PathVariable int userId,
+                                              @RequestPart MultipartFile multipartFile,
+                                              @RequestBody @Valid UserUpdateDTO request ) {
         UserDetailRespone user = userService.updateUser(userId, request);
-        return new ResponseEntity<UserDetailRespone>(HttpStatus.OK.value(), "User updated successfully", user);
+        return new ApiResponse<UserDetailRespone>(HttpStatus.OK.value(), "User updated successfully", user);
     }
 
     @DeleteMapping("delete/{userId}")
-    ResponseEntity<?> deleteUser(@PathVariable int userId) {
+    ApiResponse<?> deleteUser(@PathVariable int userId) {
         try {
             userService.deleteUser(userId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully");
+            return new ApiResponse<>(HttpStatus.NO_CONTENT.value(), "User deleted successfully");
         } catch (Exception e) {
-            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
     }
 
     @PostMapping("/upload/{userId}")
-    public ResponseEntity uploadFile(@PathVariable int userId ,
-                                     @RequestParam("image") MultipartFile multipartFile) {
+    public ApiResponse<?> uploadFile(@PathVariable int userId ,
+                                  @RequestParam("image") MultipartFile multipartFile) {
         try {
             userService.uploadImage(userId, multipartFile);
-            return new ResponseEntity(HttpStatus.OK.value(), "Image uploaded successfully");
+            return new ApiResponse<>(HttpStatus.OK.value(), "Image uploaded successfully");
         }
         catch (Exception e) {
             log.error("Error uploading image for user with ID {}: {}", userId, e.getMessage());
-            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), "Failed to upload image: " + e.getMessage());
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Failed to upload image: " + e.getMessage());
         }
     }
 
     @PatchMapping("change-password")
-    public ResponseEntity changePassword(@RequestBody @Valid UserPasswordRequest request) {
+    public ApiResponse<?> changePassword(@RequestBody @Valid UserPasswordRequest request) {
         try {
             userService.changePassword(request);
-            return new ResponseEntity<>(HttpStatus.OK.value(), "Password changed successfully");
+            return new ApiResponse<>(HttpStatus.OK.value(), "Password changed successfully");
         } catch (Exception e) {
-            return new ResponseErrorEntity(HttpStatus.BAD_REQUEST.value(), "Failed to change password: " + e.getMessage());
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Failed to change password: " + e.getMessage());
         }
     }
 }

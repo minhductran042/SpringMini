@@ -1,8 +1,10 @@
 package com.minhductran.tutorial.minhductran.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 
-public class ResponseEntity<T> {
+@Builder
+public class ApiResponse<T> {
     private int status;
     private String message;
 
@@ -10,13 +12,13 @@ public class ResponseEntity<T> {
     private T data;
 
     //DELETE
-    public ResponseEntity(int status, String message) {
+    public ApiResponse(int status, String message) {
         this.status = status;
         this.message = message;
     }
 
     //GET, POST, PUT, PATCH
-    public ResponseEntity(int status, String message, T data) {
+    public ApiResponse(int status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;

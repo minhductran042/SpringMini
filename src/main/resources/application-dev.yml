@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8084
 spring:
   config:
     activate:
@@ -15,13 +15,22 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  logging:
-    file:
-      name: logs/application-dev.log
-    level:
-      root: INFO
-      org.springframework: INFO
-      org.hibernate: INFO
+
+# Cấu hình logging cho DEV environment
+logging:
+  file:
+    name: logs/application-dev.log
+  level:
+    root: INFO
+    com.minhductran.tutorial: DEBUG  # Package của bạn với level DEBUG để debug
+    org.springframework: INFO
+    org.hibernate: DEBUG            # Chi tiết SQL queries
+    org.springframework.security: DEBUG  # Chi tiết về security
+    org.springframework.web: DEBUG      # Chi tiết về web requests
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [DEV] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [DEV] %logger{36} - %msg%n"
+
 openapi:
   service:
     api-docs: api-services

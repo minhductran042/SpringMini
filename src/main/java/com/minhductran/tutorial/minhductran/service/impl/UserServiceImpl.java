@@ -1,7 +1,7 @@
 package com.minhductran.tutorial.minhductran.service.impl;
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
 import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
-import com.minhductran.tutorial.minhductran.dto.request.UserPasswordRequest;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserPasswordRequest;
 import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
 import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.mappers.ToDoMapper;
@@ -13,7 +13,6 @@ import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
 import com.minhductran.tutorial.minhductran.utils.Role;
-import com.minhductran.tutorial.minhductran.utils.ToDoStatus;
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -71,11 +70,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-
-        user.setRoles(roles);
 
         userRepository.save(user);
         return userMapper.toUserDetailResponse(user);

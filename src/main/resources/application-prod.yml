@@ -4,11 +4,26 @@ spring:
   config:
     activate:
       on-profile: prod
-  logging:
-    file:
-      name: logs/application-test.log
-    level:
-      root: WARN
+
+# Cấu hình logging cho PRODUCTION environment
+logging:
+  file:
+    name: logs/application-prod.log
+    max-size: 100MB       # Giới hạn kích thước file log
+    max-history: 30       # Giữ 30 file log cũ
+  level:
+    root: WARN
+    com.minhductran.tutorial: INFO  # Chỉ log INFO trở lên cho ứng dụng
+    org.springframework: WARN
+    org.hibernate: WARN
+    org.springframework.security: WARN
+    org.apache: ERROR
+    org.postgresql: ERROR
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [PROD] %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [PROD] %logger{36} - %msg%n"
+
+
 openapi:
   service:
     api-docs: api-services

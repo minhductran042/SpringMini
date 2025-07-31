@@ -1,5 +1,7 @@
 package com.minhductran.tutorial.minhductran.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +24,16 @@ import java.util.stream.Collectors;
 @Slf4j
 public class User extends AbstractEntity implements UserDetails {
 
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="user_catalogue_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_catalogue_id")
+    )
+    @JsonManagedReference
+    private Set<UserCatalogue> userCatalogues= new HashSet<>(); // Thêm trường userCatalogues để liên kết với UserCatalogue
+
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
@@ -29,6 +41,7 @@ public class User extends AbstractEntity implements UserDetails {
     private String email; // Thêm trường email để lưu trữ địa chỉ email người dùng
 
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "phone", unique = true, nullable = false)
@@ -42,6 +55,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // lazy: chi tai todo khi user goi getTodoList
+    @JsonIgnore
     private List<ToDo> todos;
 
     @Column(name = "user_status")
@@ -51,11 +65,21 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "logo")
     private String logo; // Thêm trường logo lưu trữ ảnh đại diện của người dùng
 
-    Set<String> roles = new HashSet<>(); // Thêm trường roles để lưu trữ các quyền của người dùng
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        try {
+            List<GrantedAuthority> authorities = userCatalogues.stream()
+            .flatMap(catalogue -> catalogue.getPermissions().stream())
+            .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+            .collect(Collectors.toList());
+
+            return authorities;
+
+        } catch (Exception e) {
+            // Return empty list if there's LazyInitializationException
+            return Collections.emptyList();
+        }
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.minhductran.tutorial.minhductran.exception;
 
+import com.minhductran.tutorial.minhductran.dto.response.ApiResponse;
+import com.minhductran.tutorial.minhductran.dto.response.ApiResponseError;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,8 +22,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError handleValidationException(Exception error, WebRequest request) { // request được dùng đê lấy request
-        ResponseError errorResponse = new ResponseError();
+    public ApiResponseError handleValidationException(Exception error, WebRequest request) { // request được dùng đê lấy request
+        ApiResponseError errorResponse = new ApiResponseError();
         errorResponse.setTimestamp(new Date());
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
         errorResponse.setPath(request.getDescription(false)
@@ -37,8 +40,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseError handleAccessDeniedException(Exception error, WebRequest request) {
-        ResponseError errorResponse = new ResponseError();
+    public ApiResponseError handleAccessDeniedException(Exception error, WebRequest request) {
+        ApiResponseError errorResponse = new ApiResponseError();
         errorResponse.setTimestamp(new Date());
         errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
         errorResponse.setStatus(HttpStatus.FORBIDDEN.value());
@@ -50,8 +53,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseError handleResourceNotFoundException(Exception error, WebRequest request) {
-        ResponseError errorResponse = new ResponseError();
+    public ApiResponseError handleResourceNotFoundException(Exception error, WebRequest request) {
+        ApiResponseError errorResponse = new ApiResponseError();
         errorResponse.setTimestamp(new Date());
         errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
         errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -63,8 +66,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InternalException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseError InternalErrorRespone(Exception error, WebRequest request) {
-        ResponseError errorResponse = new ResponseError();
+    public ApiResponseError InternalErrorRespone(Exception error, WebRequest request) {
+        ApiResponseError errorResponse = new ApiResponseError();
         errorResponse.setTimestamp(new Date());
         errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
         errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -76,8 +79,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError BadRequestException(Exception error, WebRequest request) {
-        ResponseError errorResponse = new ResponseError();
+    public ApiResponseError BadRequestException(Exception error, WebRequest request) {
+        ApiResponseError errorResponse = new ApiResponseError();
         errorResponse.setTimestamp(new Date());
         errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
         errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
@@ -87,16 +90,6 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
-
-    @Getter
-    @Setter
-    public class ResponseError {
-        private Date timestamp;
-        private int status;
-        private String path;// Đường dẫn của request lỗi
-        private String error;
-        private String message;
-    }
 }
 
 
