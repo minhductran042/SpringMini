@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class ToDoController {
     private ToDoService toDoService;
 
     @PostMapping("create")
+    @PreAuthorize("hasAuthority('todo:store')")
     ApiResponse<ToDoDetailResponse> createTo(@RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.createToDo(request);
@@ -38,6 +40,7 @@ public class ToDoController {
     }
 
     @GetMapping("get/{todoId}")
+    @PreAuthorize("hasAuthority('todo:show')")
     ApiResponse<ToDoDetailResponse> getToDo(@PathVariable int todoId) {
         try {
             ToDoDetailResponse toDo = toDoService.getToDo(todoId);
@@ -48,6 +51,7 @@ public class ToDoController {
     }
 
     @GetMapping("list")
+    @PreAuthorize("hasAuthority('todo:list')")
     ApiResponse<List<ToDoDetailResponse>> getAllToDos(@RequestParam(defaultValue = "0", required = false) int pageNo,
                                                       @RequestParam(defaultValue = "20", required = false) int pageSize,
                                                       @RequestParam(defaultValue = "id", required = false) String sortBy,
@@ -60,7 +64,9 @@ public class ToDoController {
         }
     }
 
+
     @PutMapping("update/{todoId}")
+    @PreAuthorize("hasAuthority('todo:update')")
     ApiResponse<ToDoDetailResponse> updateToDo(@PathVariable int todoId, @RequestBody @Valid ToDoDTO request) {
         try {
             ToDoDetailResponse toDo = toDoService.updateToDo(todoId, request);
@@ -71,6 +77,7 @@ public class ToDoController {
     }
 
     @DeleteMapping("delete/{todoId}")
+    @PreAuthorize("hasAuthority('todo:delete')")
     ApiResponse<?> deleteToDo(@PathVariable int todoId) {
         try {
             toDoService.deleteToDo(todoId);
