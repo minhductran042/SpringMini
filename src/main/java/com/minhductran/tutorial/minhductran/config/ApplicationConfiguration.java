@@ -1,6 +1,7 @@
 package com.minhductran.tutorial.minhductran.config;
 
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
+import com.sendgrid.SendGrid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class ApplicationConfiguration {
+
+    @Value("${SENDGRID_API_KEY}")
+    private String sendGridApiKey;
+
+
     private final UserRepository userRepository;
     public ApplicationConfiguration(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -47,4 +53,11 @@ public class ApplicationConfiguration {
 
         return authProvider;
     }
+
+    @Bean
+    public SendGrid sendGrid() {
+        return new SendGrid(sendGridApiKey);
+    }
+
+
 }
