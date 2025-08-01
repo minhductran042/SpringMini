@@ -90,6 +90,19 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+    @ExceptionHandler({RefreshTokenException.class})
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ApiResponseError handleRefreshTokenException(Exception error, WebRequest request) {
+        ApiResponseError errorResponse = new ApiResponseError();
+        errorResponse.setTimestamp(new Date());
+        errorResponse.setPath(request.getDescription(false).replace("uri=", ""));
+        errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        errorResponse.setError(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+        errorResponse.setMessage("Invalid or expired refresh token");
+
+        return errorResponse;
+    }
+
 }
 
 

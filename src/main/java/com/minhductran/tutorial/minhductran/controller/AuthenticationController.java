@@ -1,7 +1,10 @@
 package com.minhductran.tutorial.minhductran.controller;
 
 import com.minhductran.tutorial.minhductran.dto.request.User.LoginUserDto;
+import com.minhductran.tutorial.minhductran.dto.request.User.RefreshTokenRequest;
 import com.minhductran.tutorial.minhductran.dto.response.LoginResponse;
+import com.minhductran.tutorial.minhductran.dto.response.RefreshTokenResponse;
+import com.minhductran.tutorial.minhductran.exception.RefreshTokenException;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.AuthenticationService;
@@ -11,6 +14,8 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -22,6 +27,7 @@ public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final UserDetailsService userDetailsService;
 
     @Data
     public static class UserResponse {
@@ -39,9 +45,44 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto){
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        String accessToken = jwtService.generateToken(authenticatedUser);
+        String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
+        
+        LoginResponse loginResponse = new LoginResponse(
+            accessToken, 
+            refreshToken, 
+            jwtService.getExpirationTime(),
+            jwtService.getRefreshTokenExpirationTime()
+        );
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        // Extract username from refresh token
+        String username = jwtService.extractUsername(request.getRefreshToken());
+        
+        if (username == null) {
+            throw new RefreshTokenException("Invalid refresh token");
+        }
+
+        // Load user details
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        
+        // Validate refresh token
+        if (jwtService.isRefreshTokenValid(request.getRefreshToken(), userDetails)) {
+            // Generate new access token and refresh token
+            String newAccessToken = jwtService.generateToken(userDetails);
+
+            RefreshTokenResponse response = new RefreshTokenResponse(
+                    newAccessToken,
+                    jwtService.getExpirationTime()
+            );
+            
+            return ResponseEntity.ok(response);
+        } else {
+            throw new RefreshTokenException("Invalid or expired refresh token");
+        }
     }
 
     // Thêm endpoint để lấy thông tin user hiện tại

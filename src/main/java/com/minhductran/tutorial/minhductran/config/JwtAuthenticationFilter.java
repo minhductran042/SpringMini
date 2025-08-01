@@ -65,9 +65,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Load user details from database
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 
-                // Validate JWT token
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    log.debug("Token is valid for user: {}", userEmail);
+                // Validate JWT token (only access tokens)
+                String tokenType = jwtService.extractTokenType(jwt);
+                if ("ACCESS".equals(tokenType) && jwtService.isTokenValid(jwt, userDetails)) {
+                    log.debug("Access token is valid for user: {}", userEmail);
                     
                     // Create authentication token
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -82,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     log.debug("Authentication set successfully for user: {}", userEmail);
                 } else {
-                    log.warn("Invalid token for user: {}", userEmail);
+                    log.warn("Invalid or wrong token type for user: {}", userEmail);
                 }
             }
 
@@ -102,6 +103,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean isPublicEndpoint(String requestURI) {
         return requestURI.equals("/auth/login") || 
                requestURI.equals("/auth/register") ||
+               requestURI.equals("/auth/refresh") ||
                requestURI.startsWith("/error") ||
                requestURI.startsWith("/swagger") ||
                requestURI.startsWith("/v3/api-docs");

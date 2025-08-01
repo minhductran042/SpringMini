@@ -29,6 +29,9 @@ public class JwtService {
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
+    @Value("${security.jwt.refresh-token.expiration-time}")
+    private long refreshTokenExpiration;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -45,20 +48,42 @@ public class JwtService {
             User user = (User) userDetails;
             extraClaims.put("userId", user.getId());
             extraClaims.put("email", user.getEmail());
+            extraClaims.put("tokenType", "ACCESS");
             // Có thể thêm role, name, etc.
             // extraClaims.put("role", user.getRole());
         }
-        String token = generateToken(extraClaims, userDetails);
-        log.debug("Generated token for user: {}", userDetails.getUsername());
+        String token = generateToken(extraClaims, userDetails, jwtExpiration);
+        log.debug("Generated access token for user: {}", userDetails.getUsername());
         return token;
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> extraClaims = new HashMap<>();
+        if (userDetails instanceof User) {
+            User user = (User) userDetails;
+            extraClaims.put("userId", user.getId());
+            extraClaims.put("email", user.getEmail());
+            extraClaims.put("tokenType", "REFRESH");
+        }
+        String refreshToken = generateToken(extraClaims, userDetails, refreshTokenExpiration);
+        log.debug("Generated refresh token for user: {}", userDetails.getUsername());
+        return refreshToken;
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+        return buildToken(extraClaims, userDetails, expiration);
+    }
+
     public long getExpirationTime() {
         return jwtExpiration;
+    }
+
+    public long getRefreshTokenExpirationTime() {
+        return refreshTokenExpiration;
     }
 
     private String buildToken(
@@ -84,6 +109,23 @@ public class JwtService {
             return isValid;
         } catch (Exception e) {
             log.error("Error validating token: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(refreshToken);
+            final String tokenType = extractClaim(refreshToken, claims -> claims.get("tokenType", String.class));
+            
+            boolean isValid = (username.equals(userDetails.getUsername())) && 
+                             !isTokenExpired(refreshToken) && 
+                             "REFRESH".equals(tokenType);
+            
+            log.debug("Refresh token validation for user {}: {}", username, isValid);
+            return isValid;
+        } catch (Exception e) {
+            log.error("Error validating refresh token: {}", e.getMessage());
             return false;
         }
     }
@@ -120,5 +162,11 @@ public class JwtService {
     public String extractEmail(String token) {
         Claims claims = extractAllClaims(token);
         return claims.get("email", String.class);
+    }
+
+    // Thêm method để extract token type
+    public String extractTokenType(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("tokenType", String.class);
     }
 }

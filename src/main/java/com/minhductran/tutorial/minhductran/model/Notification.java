@@ -1,10 +1,18 @@
 package com.minhductran.tutorial.minhductran.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@Entity
+@Table(name = "notifications")
+@Getter
+@Setter
 public class Notification extends AbstractEntity{
     @Column(nullable = false)
     private String title;
@@ -21,7 +29,9 @@ public class Notification extends AbstractEntity{
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "data")
+
+    @Column(name = "data", columnDefinition = "TEXT")
+    @jakarta.persistence.Convert(converter = com.minhductran.tutorial.minhductran.converter.MapToJsonConverter.class)
     private Map<String,String> data;
 
     @Column(name = "sent_status", nullable = false)

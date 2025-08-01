@@ -51,4 +51,6 @@ openapi:
 security:
   jwt:
     secret-key: 6X48eG6MIx3ynHl3f5YYXNwhU7IMU22IKxb48T1nW3s=
-    expiration-time: 3600000
+    expiration-time: 3600000  # 1 hour
+    refresh-token:
+      expiration-time: 604800000  # 7 days
