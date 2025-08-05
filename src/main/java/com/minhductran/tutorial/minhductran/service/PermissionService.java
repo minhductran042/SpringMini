@@ -2,9 +2,7 @@ package com.minhductran.tutorial.minhductran.service;
 
 import com.minhductran.tutorial.minhductran.dto.request.Permission.StoreRequest;
 import com.minhductran.tutorial.minhductran.dto.request.Permission.UpdateRequest;
-import com.minhductran.tutorial.minhductran.dto.response.PermissionResponse;
 import com.minhductran.tutorial.minhductran.model.Permission;
-import com.minhductran.tutorial.minhductran.model.UserCatalogue;
 import org.springframework.data.domain.Page;
 
 import java.util.Map;

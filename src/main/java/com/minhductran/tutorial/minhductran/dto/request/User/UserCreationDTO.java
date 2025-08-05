@@ -1,4 +1,4 @@
-package com.minhductran.tutorial.minhductran.dto.request;
+package com.minhductran.tutorial.minhductran.dto.request.User;
 
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.validation.constraints.NotBlank;
@@ -27,5 +27,4 @@ public class UserCreationDTO {
     private String lastName;
     @NotBlank(message = "Email cannot be blank")
     private String email;
-
 }

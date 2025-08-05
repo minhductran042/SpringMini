@@ -1,9 +1,7 @@
-package com.minhductran.tutorial.minhductran.dto.response;
+package com.minhductran.tutorial.minhductran.dto.response.User;
 
 
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

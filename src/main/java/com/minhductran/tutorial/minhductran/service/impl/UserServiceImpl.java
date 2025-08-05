@@ -1,9 +1,9 @@
 package com.minhductran.tutorial.minhductran.service.impl;
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
-import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.User.UserPasswordRequest;
-import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
-import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.response.User.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.mappers.ToDoMapper;
 import com.minhductran.tutorial.minhductran.mappers.UserMapper;
 import com.minhductran.tutorial.minhductran.model.ToDo;
@@ -12,7 +12,6 @@ import com.minhductran.tutorial.minhductran.exception.ResourceNotFoundException;
 import com.minhductran.tutorial.minhductran.repository.ToDoRepository;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;
 import com.minhductran.tutorial.minhductran.service.UserService;
-import com.minhductran.tutorial.minhductran.utils.Role;
 import com.minhductran.tutorial.minhductran.utils.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -66,7 +64,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(request);
 
         if(user.getStatus() == null) {
-            user.setStatus(UserStatus.ACTIVE);
+            user.setStatus(UserStatus.INACTIVE);
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));

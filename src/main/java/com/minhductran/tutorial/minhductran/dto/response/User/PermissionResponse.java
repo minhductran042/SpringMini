@@ -1,4 +1,4 @@
-package com.minhductran.tutorial.minhductran.dto.response;
+package com.minhductran.tutorial.minhductran.dto.response.User;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @Builder
 @RequiredArgsConstructor
-public class UserCatalogueResponse {
+public class PermissionResponse {
     private final int id;
     private final String name;
     private final Integer publish;

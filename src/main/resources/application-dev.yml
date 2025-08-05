@@ -15,17 +15,16 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: Asia/Ho_Chi_Minh  # Thêm thuộc tính này
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   jackson:
     time-zone: Asia/Ho_Chi_Minh  # Thêm thuộc tính này
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
     from-email: ${FROM_EMAIL}
     template_id: "d-c877b4628f3f4e739d7b768bd14feb4a"
-    verification_link: "http://localhost:8080/user/confirm-email"
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
+    verification_link: "http://localhost:8084/user/confirm-email"
 # Cấu hình logging cho DEV environment
 logging:
   file:

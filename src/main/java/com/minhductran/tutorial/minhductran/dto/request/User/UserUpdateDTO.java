@@ -1,4 +1,4 @@
-package com.minhductran.tutorial.minhductran.dto.request;
+package com.minhductran.tutorial.minhductran.dto.request.User;
 
 
 import jakarta.validation.constraints.NotBlank;

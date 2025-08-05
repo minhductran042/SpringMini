@@ -1,4 +1,4 @@
-package com.minhductran.tutorial.minhductran.dto.response;
+package com.minhductran.tutorial.minhductran.dto.response.Auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

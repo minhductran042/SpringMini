@@ -2,8 +2,8 @@ package com.minhductran.tutorial.minhductran.controller;
 
 import com.minhductran.tutorial.minhductran.dto.request.User.LoginUserDto;
 import com.minhductran.tutorial.minhductran.dto.request.User.RefreshTokenRequest;
-import com.minhductran.tutorial.minhductran.dto.response.LoginResponse;
-import com.minhductran.tutorial.minhductran.dto.response.RefreshTokenResponse;
+import com.minhductran.tutorial.minhductran.dto.response.Auth.LoginResponse;
+import com.minhductran.tutorial.minhductran.dto.response.Auth.RefreshTokenResponse;
 import com.minhductran.tutorial.minhductran.exception.RefreshTokenException;
 import com.minhductran.tutorial.minhductran.model.User;
 import com.minhductran.tutorial.minhductran.repository.UserRepository;

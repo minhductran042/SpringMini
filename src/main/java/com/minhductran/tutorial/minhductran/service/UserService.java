@@ -1,10 +1,10 @@
 package com.minhductran.tutorial.minhductran.service;
 
 import com.minhductran.tutorial.minhductran.dto.request.ToDoDTO;
-import com.minhductran.tutorial.minhductran.dto.request.UserCreationDTO;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserCreationDTO;
 import com.minhductran.tutorial.minhductran.dto.request.User.UserPasswordRequest;
-import com.minhductran.tutorial.minhductran.dto.request.UserUpdateDTO;
-import com.minhductran.tutorial.minhductran.dto.response.UserDetailRespone;
+import com.minhductran.tutorial.minhductran.dto.request.User.UserUpdateDTO;
+import com.minhductran.tutorial.minhductran.dto.response.User.UserDetailRespone;
 import com.minhductran.tutorial.minhductran.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
