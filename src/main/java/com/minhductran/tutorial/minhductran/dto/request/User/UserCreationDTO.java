@@ -27,4 +27,5 @@ public class UserCreationDTO {
     private String lastName;
     @NotBlank(message = "Email cannot be blank")
     private String email;
+
 }

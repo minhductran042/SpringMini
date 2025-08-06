@@ -8,13 +8,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +38,7 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> extraClaims = new HashMap<>();
         // Nếu userDetails là User entity, thêm thông tin bổ sung
         if (userDetails instanceof User) {
@@ -52,7 +49,7 @@ public class JwtService {
             // Có thể thêm role, name, etc.
             // extraClaims.put("role", user.getRole());
         }
-        String token = generateToken(extraClaims, userDetails, jwtExpiration);
+        String token = generateAccessToken(extraClaims, userDetails, jwtExpiration);
         log.debug("Generated access token for user: {}", userDetails.getUsername());
         return token;
     }
@@ -65,16 +62,16 @@ public class JwtService {
             extraClaims.put("email", user.getEmail());
             extraClaims.put("tokenType", "REFRESH");
         }
-        String refreshToken = generateToken(extraClaims, userDetails, refreshTokenExpiration);
+        String refreshToken = generateAccessToken(extraClaims, userDetails, refreshTokenExpiration);
         log.debug("Generated refresh token for user: {}", userDetails.getUsername());
         return refreshToken;
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+    public String generateAccessToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
         return buildToken(extraClaims, userDetails, expiration);
     }
 

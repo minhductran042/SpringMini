@@ -34,3 +34,4 @@ build/
 logs
 .env
 notification-push-firebase.json
+OAUTH2_SETUP.md

@@ -45,7 +45,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto){
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        String accessToken = jwtService.generateToken(authenticatedUser);
+        String accessToken = jwtService.generateAccessToken(authenticatedUser);
         String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
         
         LoginResponse loginResponse = new LoginResponse(
@@ -72,7 +72,7 @@ public class AuthenticationController {
         // Validate refresh token
         if (jwtService.isRefreshTokenValid(request.getRefreshToken(), userDetails)) {
             // Generate new access token and refresh token
-            String newAccessToken = jwtService.generateToken(userDetails);
+            String newAccessToken = jwtService.generateAccessToken(userDetails);
 
             RefreshTokenResponse response = new RefreshTokenResponse(
                     newAccessToken,

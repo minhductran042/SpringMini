@@ -1,8 +1,7 @@
 package com.minhductran.tutorial.minhductran.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.minhductran.tutorial.minhductran.converter.MapToJsonConverter;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,9 +28,8 @@ public class Notification extends AbstractEntity{
     @Column(name = "image_url")
     private String imageUrl;
 
-
-    @Column(name = "data", columnDefinition = "TEXT")
-    @jakarta.persistence.Convert(converter = com.minhductran.tutorial.minhductran.converter.MapToJsonConverter.class)
+    @Column(columnDefinition = "TEXT")
+    @Convert(converter = MapToJsonConverter.class)
     private Map<String,String> data;
 
     @Column(name = "sent_status", nullable = false)

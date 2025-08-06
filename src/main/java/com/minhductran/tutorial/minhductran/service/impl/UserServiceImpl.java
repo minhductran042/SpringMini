@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -176,6 +177,104 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.save(user);
         log.info("Password changed successfully for user with ID {}", request.getUsername());
+    }
+
+    @Override
+    @Transactional
+    public User processOAuth2User(String email) {
+        log.info("Processing OAuth2 user - Email: {}", email);
+        
+        // Check if user exists by email
+        Optional<User> existingUserOpt = userRepository.findByEmail(email);
+        
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            log.info("OAuth2 user already exists: {}", email);
+            return existingUser;
+        }
+        
+        // Create new user from OAuth2
+        log.info("Creating new OAuth2 user: {}", email);
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setUsername(email); // Use email as username
+        newUser.setStatus(UserStatus.ACTIVE);
+        // Set a random password for OAuth2 users (they won't use it)
+        newUser.setPassword(passwordEncoder.encode("oauth2_user_" + System.currentTimeMillis()));
+        
+        userRepository.save(newUser);
+        log.info("New OAuth2 user created: {}", email);
+        return newUser;
+    }
+
+    @Override
+    @Transactional
+    public User processOAuth2User(String email, String name) {
+        log.info("Processing OAuth2 user - Email: {}, Name: {}", email, name);
+        
+        // Check if user exists by email
+        Optional<User> existingUserOpt = userRepository.findByEmail(email);
+        
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            log.info("OAuth2 user already exists: {}", email);
+            // Update user information if needed
+            if (name != null && !name.equals(existingUser.getUsername())) {
+                existingUser.setUsername(name);
+            }
+            userRepository.save(existingUser);
+            return existingUser;
+        }
+        
+        // Create new user from OAuth2
+        log.info("Creating new OAuth2 user: {}", email);
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setUsername(name != null ? name : email);
+        newUser.setStatus(UserStatus.ACTIVE);
+        // Set a random password for OAuth2 users (they won't use it)
+        newUser.setPassword(passwordEncoder.encode("oauth2_user_" + System.currentTimeMillis()));
+        
+        userRepository.save(newUser);
+        log.info("New OAuth2 user created: {}", email);
+        return newUser;
+    }
+
+    @Override
+    @Transactional
+    public User processOAuth2User(String email, String name, String picture) {
+        log.info("Processing OAuth2 user with picture - Email: {}, Name: {}", email, name);
+        
+        // Check if user exists by email
+        Optional<User> existingUserOpt = userRepository.findByEmail(email);
+        
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            log.info("OAuth2 user already exists: {}", email);
+            // Update user information if needed
+            if (name != null && !name.equals(existingUser.getUsername())) {
+                existingUser.setUsername(name);
+            }
+            if (picture != null && !picture.equals(existingUser.getLogo())) {
+                existingUser.setLogo(picture);
+            }
+            userRepository.save(existingUser);
+            return existingUser;
+        }
+        
+        // Create new user from OAuth2
+        log.info("Creating new OAuth2 user with picture: {}", email);
+        User newUser = new User();
+        newUser.setEmail(email);
+        newUser.setUsername(name != null ? name : email);
+        newUser.setLogo(picture);
+        newUser.setStatus(UserStatus.ACTIVE);
+        // Set a random password for OAuth2 users (they won't use it)
+        newUser.setPassword(passwordEncoder.encode("oauth2_user_" + System.currentTimeMillis()));
+        
+        userRepository.save(newUser);
+        log.info("New OAuth2 user created with picture: {}", email);
+        return newUser;
     }
 }
 

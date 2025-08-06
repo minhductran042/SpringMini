@@ -19,4 +19,7 @@ public interface UserService {
     public User createUserWithTodo(UserCreationDTO request, ToDoDTO rquest);
     public void uploadImage(int userId, MultipartFile multipartFile);
     public void changePassword(UserPasswordRequest request);
+    public User processOAuth2User(String email);
+    public User processOAuth2User(String email, String name);
+    public User processOAuth2User(String email, String name, String picture);
 }
