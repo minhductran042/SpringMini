@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8084
 spring:
   config:
     activate:
@@ -20,6 +20,16 @@ spring:
     show-sql: true
   jackson:
     time-zone: Asia/Ho_Chi_Minh  # Thêm thuộc tính này
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
   sendgrid:
     api-key: ${SENDGRID_API_KEY}
     from-email: ${FROM_EMAIL}

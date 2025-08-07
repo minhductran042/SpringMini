@@ -53,6 +53,9 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "github_id")
+    private String githubId; // Store GitHub user ID for OAuth2 users
+
     // mappedBy chỉ ra rằng trường này là mối quan hệ ngược lại với trường "user" trong lớp Todo
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) // lazy: chi tai todo khi user goi getTodoList
     @JsonIgnore

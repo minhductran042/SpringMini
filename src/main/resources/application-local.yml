@@ -1,0 +1,14 @@
+# Local configuration for OAuth2
+# Copy this file and rename to application-dev.yml with your actual credentials
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: your_google_client_id_here
+            client-secret: your_google_client_secret_here
+          github:
+            client-id: your_github_client_id_here
+            client-secret: your_github_client_secret_here 

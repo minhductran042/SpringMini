@@ -19,9 +19,18 @@ public class OAuth2Configuration {
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String googleClientSecret;
 
+    @Value("${spring.security.oauth2.client.registration.github.client-id}")
+    private String githubClientId;
+
+    @Value("${spring.security.oauth2.client.registration.github.client-secret}")
+    private String githubClientSecret;
+
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
-        return new InMemoryClientRegistrationRepository(googleClientRegistration());
+        return new InMemoryClientRegistrationRepository(
+            googleClientRegistration(),
+            githubClientRegistration()
+        );
     }
 
     private ClientRegistration googleClientRegistration() {
@@ -40,4 +49,20 @@ public class OAuth2Configuration {
                 .clientName("Google")
                 .build();
     }
-} 
+
+    private ClientRegistration githubClientRegistration() {
+        return ClientRegistration.withRegistrationId("github")
+                .clientId(githubClientId)
+                .clientSecret(githubClientSecret)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .scope("read:user", "user:email")
+                .authorizationUri("https://github.com/login/oauth/authorize")
+                .tokenUri("https://github.com/login/oauth/access_token")
+                .userInfoUri("https://api.github.com/user")
+                .userNameAttributeName("login")
+                .clientName("GitHub")
+                .build();
+    }
+}
