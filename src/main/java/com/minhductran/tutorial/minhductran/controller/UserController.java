@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("change-password")
+    @PutMapping("change-password")
     public ApiResponse<?> changePassword(@RequestBody @Valid UserPasswordRequest request) {
         try {
             userService.changePassword(request);
@@ -114,6 +114,7 @@ public class UserController {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Failed to change password: " + e.getMessage());
         }
     }
+
 }
 
 

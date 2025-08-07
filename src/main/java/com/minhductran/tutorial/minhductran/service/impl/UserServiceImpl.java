@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import com.minhductran.tutorial.minhductran.exception.BadRequestException;
 
 @Slf4j
 @Service
@@ -168,15 +169,35 @@ public class UserServiceImpl implements UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
+
+    
     @Override
     public void changePassword(UserPasswordRequest request) {
         log.info("Changing password for user with ID {}", request.getUsername());
-        User user = userRepository.findByUsername(request.getUsername());
-        if(request.getPassword().equals(request.getConfirmPassword())) {
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        
+        // Validate request
+        if (request.getUsername() == null || request.getUsername().isEmpty()) {
+            throw new BadRequestException("Username is required");
         }
-        userRepository.save(user);
-        log.info("Password changed successfully for user with ID {}", request.getUsername());
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            throw new BadRequestException("Password is required");
+        }
+        if (request.getConfirmPassword() == null || request.getConfirmPassword().isEmpty()) {
+            throw new BadRequestException("Confirm password is required");
+        }
+        
+        User user = userRepository.findByUsername(request.getUsername());
+        if (user == null) {
+            throw new ResourceNotFoundException("User not found with username: " + request.getUsername());
+        }
+        
+        if (request.getPassword().equals(request.getConfirmPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
+            log.info("Password changed successfully for user with ID {}", request.getUsername());
+        } else {
+            throw new BadRequestException("Password and confirm password do not match");
+        }
     }
 
     @Override

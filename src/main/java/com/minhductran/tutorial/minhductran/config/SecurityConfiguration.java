@@ -34,7 +34,7 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/auth/refresh", "/auth/oauth2/**").permitAll()
+                .requestMatchers("/auth/login", "/users/forgot-password", "/auth/refresh", "/auth/oauth2/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
